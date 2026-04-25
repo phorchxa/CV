@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giorgi Porchkhidze — AI Engineer / Data Scientist</title>
+<meta name="description" content="AI Engineer and Data Scientist building multi-agent AI systems, deep neural networks, and production ML pipelines.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    color: #d8e4dc;
+    background: #050807;
+    background-image:
+      linear-gradient(rgba(20, 220, 130, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20, 220, 130, 0.05) 1px, transparent 1px);
+    background-size: 26px 26px;
+    background-attachment: fixed;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  a { color: #14dc82; text-decoration: none; transition: color 0.2s, text-shadow 0.2s; }
+  a:hover { color: #5af0a8; text-shadow: 0 0 8px rgba(20, 220, 130, 0.6); }
+
+  .wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+  }
+
+  /* Window chrome */
+  .window {
+    background: #050807;
+    border: 1px solid rgba(20, 220, 130, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(20, 220, 130, 0.1), 0 0 1px rgba(20, 220, 130, 0.4);
+  }
+  .titlebar {
+    background: linear-gradient(to bottom, #1a2520, #0f1814);
+    border-bottom: 1px solid rgba(20, 220, 130, 0.3);
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    color: #6a8478;
+    letter-spacing: 0.5px;
+  }
+  .traffic { display: inline-flex; gap: 6px; margin-right: 14px; }
+  .traffic .dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+  }
+  .traffic .red { background: #ff5f57; }
+  .traffic .yellow { background: #febc2e; }
+  .traffic .green { background: #28c840; }
+  .titlebar .title {
+    flex: 1;
+    text-align: center;
+    color: #d8e4dc;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .titlebar .title .accent { color: #14dc82; }
+  .titlebar .controls { color: #6a8478; font-size: 12px; letter-spacing: 1px; }
+
+  .navbar {
+    background: #0c1310;
+    border-bottom: 1px solid rgba(20, 220, 130, 0.2);
+    padding: 8px 18px;
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: #6a8478;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .navbar .tab { display: inline-block; margin-right: 24px; cursor: pointer; transition: color 0.2s; }
+  .navbar .tab.active { color: #14dc82; }
+  .navbar .tab.active::before { content: "● "; }
+  .navbar .tab:hover { color: #14dc82; }
+  .navbar .meta { float: right; color: #6a8478; }
+
+  .content { padding: 22px 28px; }
+
+  /* Header */
+  header {
+    border-bottom: 1px solid rgba(20, 220, 130, 0.3);
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .tag {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: #14dc82;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+  }
+  .name {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    color: #ffffff;
+    line-height: 0.95;
+  }
+  .name .accent { color: #14dc82; }
+  .cursor {
+    display: inline-block;
+    width: 14px;
+    height: 42px;
+    background: #14dc82;
+    margin-left: 4px;
+    vertical-align: -6px;
+    animation: blink 1.1s steps(2) infinite;
+    box-shadow: 0 0 12px rgba(20, 220, 130, 0.7);
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .role {
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    color: #14dc82;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+  .status-card {
+    text-align: right;
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: #6a8478;
+    letter-spacing: 0.5px;
+    line-height: 1.7;
+    padding: 8px 12px;
+    border: 1px solid rgba(20, 220, 130, 0.3);
+    border-radius: 4px;
+    background: rgba(20, 220, 130, 0.04);
+  }
+  .status-card .live::before {
+    content: "● ";
+    color: #14dc82;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: 0.4; } }
+  .status-card .key { color: #14dc82; }
+  .contact {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    color: #b8ccc1;
+    margin-top: 14px;
+    line-height: 2;
+  }
+  .contact .item { display: inline-block; margin-right: 22px; }
+  .contact .label { color: #14dc82; }
+  .contact a { color: #d8e4dc; }
+  .contact a:hover { color: #14dc82; }
+
+  h2 {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #14dc82;
+    margin: 22px 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2::before { content: "▸"; color: #14dc82; }
+  h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(20, 220, 130, 0.4), transparent);
+  }
+  h2 .idx { font-size: 10px; color: #6a8478; letter-spacing: 2px; }
+
+  .summary {
+    font-size: 14px;
+    color: #c8d8cf;
+    line-height: 1.6;
+    padding: 14px 18px;
+    border-left: 3px solid #14dc82;
+    background: rgba(20, 220, 130, 0.05);
+    border-radius: 0 4px 4px 0;
+  }
+  .summary b { color: #ffffff; font-weight: 600; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    margin-top: 6px;
+  }
+  @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+
+  .entry { margin-bottom: 16px; }
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px dashed rgba(20, 220, 130, 0.25);
+    padding-bottom: 4px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .entry-title { font-weight: 700; font-size: 16px; color: #ffffff; }
+  .entry-date {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    color: #14dc82;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+  .entry-sub {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    color: #a8bcb1;
+    margin-bottom: 7px;
+    letter-spacing: 0.3px;
+  }
+  .entry-sub .org { color: #14dc82; font-weight: 600; }
+  ul { list-style: none; padding-left: 0; }
+  ul li {
+    margin-bottom: 5px;
+    padding-left: 18px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #c8d8cf;
+  }
+  ul li::before {
+    content: "▹";
+    position: absolute;
+    left: 0;
+    color: #14dc82;
+    top: 1px;
+  }
+  ul li b { color: #ffffff; font-weight: 600; }
+
+  .skill-section { margin-bottom: 12px; }
+  .skill-head {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    color: #14dc82;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 5px;
+  }
+  .skill-head::before { content: "[ "; color: #6a8478; }
+  .skill-head::after { content: " ]"; color: #6a8478; }
+  .chips { line-height: 1.9; }
+  .chip {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    padding: 2px 7px;
+    background: rgba(20, 220, 130, 0.07);
+    border: 1px solid rgba(20, 220, 130, 0.3);
+    color: #d8e4dc;
+    border-radius: 3px;
+    display: inline-block;
+    margin-right: 3px;
+    margin-bottom: 2px;
+    transition: all 0.2s;
+  }
+  .chip:hover {
+    background: rgba(20, 220, 130, 0.18);
+    border-color: rgba(20, 220, 130, 0.6);
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+  .chip.primary {
+    background: rgba(20, 220, 130, 0.2);
+    border-color: rgba(20, 220, 130, 0.55);
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .project {
+    margin-bottom: 14px;
+    padding-left: 14px;
+    border-left: 2px solid rgba(20, 220, 130, 0.3);
+    transition: border-color 0.2s;
+  }
+  .project:hover { border-color: #14dc82; }
+  .project-title { font-weight: 700; font-size: 15px; color: #ffffff; margin-bottom: 2px; }
+  .project-link {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    color: #14dc82;
+    margin-bottom: 2px;
+  }
+  .project-link::before { content: "↳ "; color: #6a8478; }
+  .project-stack {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    color: #a8bcb1;
+    margin-bottom: 4px;
+  }
+  .project-text { font-size: 14px; color: #c8d8cf; line-height: 1.55; }
+
+  .edu-entry { margin-bottom: 10px; }
+  .edu-school { font-weight: 700; font-size: 15px; color: #ffffff; }
+  .edu-meta {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    color: #14dc82;
+  }
+  .edu-detail { font-size: 13px; color: #a8bcb1; line-height: 1.5; margin-top: 3px; }
+
+  .lang-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 4px 0;
+    border-bottom: 1px dashed rgba(20, 220, 130, 0.15);
+  }
+  .lang-row:last-child { border-bottom: none; }
+  .lang-row .name-l { color: #ffffff; font-weight: 600; }
+  .lang-row .level { font-family: "Courier New", monospace; color: #14dc82; font-size: 12px; }
+
+  .statusbar {
+    background: #0c1310;
+    border-top: 1px solid rgba(20, 220, 130, 0.3);
+    padding: 8px 18px;
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    color: #6a8478;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .statusbar .seg { display: inline-block; margin-right: 22px; }
+  .statusbar .seg .key { color: #14dc82; }
+  .statusbar .seg .pulse::before {
+    content: "● ";
+    color: #14dc82;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  .statusbar .right { float: right; }
+
+  .print-btn {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    padding: 10px 16px;
+    background: #14dc82;
+    color: #050807;
+    border: none;
+    border-radius: 4px;
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(20, 220, 130, 0.4);
+    transition: all 0.2s;
+  }
+  .print-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(20, 220, 130, 0.6); }
+  @media print { .print-btn { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="window">
+
+    <div class="titlebar">
+      <span class="traffic">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </span>
+      <span class="title"><span class="accent">phorchxa</span>.app — candidate_profile.json</span>
+      <span class="controls">⌘ ⊟ ⊠</span>
+    </div>
+
+    <div class="navbar">
+      <span class="tab active">Profile</span>
+      <span class="tab">Experience</span>
+      <span class="tab">Projects</span>
+      <span class="tab">Stack</span>
+      <span class="tab">Education</span>
+      <span class="meta">build: 2026.04 · main</span>
+    </div>
+
+    <div class="content">
+
+      <header>
+        <div class="header-top">
+          <div>
+            <div class="tag">// CANDIDATE_ID :: 0xPHORCHXA</div>
+            <div class="name">GIORGI <span class="accent">PORCHKHIDZE</span><span class="cursor"></span></div>
+            <div class="role">AI Engineer · Data Scientist · ML Systems</div>
+          </div>
+          <div class="status-card">
+            <div class="live">STATUS: AVAILABLE</div>
+            <div><span class="key">LOC&gt;</span> Tbilisi / GE</div>
+            <div><span class="key">UTC&gt;</span> +04:00</div>
+            <div><span class="key">SIG&gt;</span> 0xPHORCHXA</div>
+          </div>
+        </div>
+        <div class="contact">
+          <span class="item"><span class="label">mail&gt;</span> <a href="mailto:giophorchkhidze@gmail.com">giophorchkhidze@gmail.com</a></span>
+          <span class="item"><span class="label">tel&gt;</span> +995 599 13 41 54</span>
+          <span class="item"><span class="label">git&gt;</span> <a href="https://github.com/phorchxa" target="_blank">github.com/phorchxa</a></span>
+          <span class="item"><span class="label">in&gt;</span> <a href="https://www.linkedin.com/in/giorgi-phorchkhidze-559b28380/" target="_blank">linkedin.com/in/giorgi-phorchkhidze</a></span>
+        </div>
+      </header>
+
+      <h2>Profile <span class="idx">// 01</span></h2>
+      <div class="summary">
+        AI Engineer and Data Scientist working at the intersection of <b>applied machine learning</b> and <b>systems engineering</b>. I design and train ML models from the ground up, architect deep neural networks, and build <b>multi-agent AI workflows</b> with LangChain, LangGraph, and the Claude Agent SDK. Comfortable across the full data stack — Python, Pandas, PostgreSQL/Supabase, AWS, Azure — and equally fluent in Linux/Bash, network infrastructure, and full-stack JavaScript deployment. I build AI that integrates into real-world systems: reliable, explainable, and engineered with discipline.
+      </div>
+
+      <div class="two-col">
+        <div class="col-main">
+
+          <h2>Experience <span class="idx">// 02</span></h2>
+
+          <div class="entry">
+            <div class="entry-head">
+              <div class="entry-title">AI Engineer · Data Scientist</div>
+              <div class="entry-date">FEB 2026 — PRESENT</div>
+            </div>
+            <div class="entry-sub"><span class="org">@ MEAMA</span> :: Tbilisi, Georgia</div>
+            <ul>
+              <li>Built <b>multi-agent AI systems</b> for autonomous business analytics — campaign monitoring, anomaly detection, decision-support — orchestrated via Claude Agent SDK, LangChain, and LangGraph.</li>
+              <li>Architected <b>real-time data pipelines</b> on Supabase / PostgreSQL feeding multi-channel dashboards (Shopify, Meta Ads, Google Ads, Omnisend).</li>
+              <li>Engineered a <b>RAG retrieval layer</b> with pgvector embeddings and automated cross-channel sync for an internal LLM-powered analyst.</li>
+              <li>Developed <b>Paperclip</b> — internal multi-agent orchestrator coordinating data ingestion and KPI agents across the Meama stack.</li>
+              <li>Ran <b>statistical analysis</b> and KPI modeling across sales, customer behavior, and marketing performance.</li>
+            </ul>
+          </div>
+
+          <div class="entry">
+            <div class="entry-head">
+              <div class="entry-title">Senior Troubleshooter</div>
+              <div class="entry-date">MAY 2025 — NOV 2025</div>
+            </div>
+            <div class="entry-sub"><span class="org">@ SILKNET</span> :: Tbilisi, Georgia</div>
+            <ul>
+              <li>Diagnosed network issues across <b>Linux / Windows / macOS</b>; automated tasks with <b>Bash and Python</b>.</li>
+              <li>Configured CCNA-level network equipment in DSLAM/OLT environments — VLANs, routing, switching, LAN-WAN architecture.</li>
+            </ul>
+          </div>
+
+          <h2>Selected Projects <span class="idx">// 03</span></h2>
+
+          <div class="project">
+            <div class="project-title">Convolutional Neural Network — CNN/MLP</div>
+            <div class="project-link"><a href="https://github.com/phorchxa/Convolutional-Neural-Networks-CNN-MLP-" target="_blank">github.com/phorchxa/Convolutional-Neural-Networks-CNN-MLP-</a></div>
+            <div class="project-stack">Python · NumPy · Deep Learning</div>
+            <div class="project-text">CNN and Multilayer Perceptron implementation — preprocessing, layer architecture, training loops, evaluation against held-out test sets.</div>
+          </div>
+
+          <div class="project">
+            <div class="project-title">Multi-Agent Analytics Platform (Paperclip)</div>
+            <div class="project-stack">Claude Agent SDK · LangChain · LangGraph · Supabase</div>
+            <div class="project-text">Production multi-agent system with autonomous monitoring agents (KPIs, ad performance, anomaly detection) coordinating with a central decision-support agent. Built on RAG retrieval over pgvector embeddings.</div>
+          </div>
+
+          <div class="project">
+            <div class="project-title">Habbitly — Habit Tracker</div>
+            <div class="project-link"><a href="https://github.com/phorchxa/BTUfinal" target="_blank">github.com/phorchxa/BTUfinal</a></div>
+            <div class="project-stack">Python · PyQt5 · SQLite · Shell</div>
+            <div class="project-text">Cross-platform desktop GUI with animated progress bars, relational schema, CRUD operations, date-based filtering.</div>
+          </div>
+
+          <h2>Education <span class="idx">// 05</span></h2>
+          <div class="edu-entry">
+            <div class="edu-school">Business and Technology University</div>
+            <div class="edu-meta">B.Sc. Computer Science &amp; AI · 2024 — Present · EQF 6</div>
+            <div class="edu-detail">Algorithms, Data Structures, ML, Discrete Math, Calculus, Linear Algebra, Probability, Databases, Networking, Linux.</div>
+          </div>
+          <div class="edu-entry">
+            <div class="edu-school">Tbilisi Green School</div>
+            <div class="edu-meta">2012 — 2024 · Gold Medal Graduate</div>
+          </div>
+
+        </div>
+
+        <div class="col-side">
+
+          <h2>Skill Stack <span class="idx">// 04</span></h2>
+
+          <div class="skill-section">
+            <div class="skill-head">Programming</div>
+            <div class="chips">
+              <span class="chip primary">Python</span><span class="chip primary">SQL</span><span class="chip primary">Bash</span><span class="chip">JavaScript</span><span class="chip">TypeScript</span><span class="chip">C#</span><span class="chip">C++</span><span class="chip">HTML/CSS</span>
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-head">ML Algorithms</div>
+            <div class="chips">
+              <span class="chip">Linear Reg.</span><span class="chip">Logistic Reg.</span><span class="chip">Random Forest</span><span class="chip">XGBoost</span><span class="chip">Gradient Boosting</span><span class="chip">Decision Trees</span><span class="chip">SVM</span><span class="chip">KNN</span><span class="chip">Naive Bayes</span><span class="chip">K-Means</span><span class="chip">DBSCAN</span><span class="chip">Hierarchical Clustering</span><span class="chip">PCA</span><span class="chip">t-SNE</span><span class="chip">Bayesian</span><span class="chip">A/B Testing</span><span class="chip">Hypothesis Testing</span>
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-head">Deep Learning</div>
+            <div class="chips">
+              <span class="chip primary">CNN</span><span class="chip primary">MLP</span><span class="chip">RNN</span><span class="chip">LSTM</span><span class="chip">GRU</span><span class="chip">Transformers</span><span class="chip">Autoencoders</span><span class="chip">Backprop</span><span class="chip">Dropout</span><span class="chip">Batch Norm</span><span class="chip">Adam / SGD</span>
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-head">ML / DL Frameworks</div>
+            <div class="chips">
+              <span class="chip primary">PyTorch</span><span class="chip primary">TensorFlow</span><span class="chip primary">Keras</span><span class="chip primary">scikit-learn</span><span class="chip">Pandas</span><span class="chip">NumPy</span><span class="chip">SciPy</span><span class="chip">Matplotlib</span><span class="chip">Seaborn</span><span class="chip">Plotly</span><span class="chip">Jupyter</span><span class="chip">Hugging Face</span>
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-head">Agents &amp; LLMs</div>
+            <div class="chips">
+              <span class="chip primary">Claude Agent SDK</span><span class="chip primary">LangChain</span><span class="chip primary">LangGraph</span><span class="chip">LlamaIndex</span><span class="chip">AutoGen</span><span class="chip">CrewAI</span><span class="chip">Haystack</span><span class="chip">Anthropic API</span><span class="chip">OpenAI API</span><span class="chip">Gemini</span><span class="chip">Ollama</span><span class="chip">Hermes</span><span class="chip">RAG</span><span class="chip">pgvector</span><span class="chip">Embeddings</span><span class="chip">Prompt Eng.</span><span class="chip">Multi-Agent</span>
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-head">Data &amp; Backend</div>
+            <div class="chips">
+              <span class="chip primary">PostgreSQL</span><span class="chip primary">Supabase</span><span class="chip primary">Advanced SQL</span><span class="chip">Oracle DB</span><span class="chip">SQLite</span><span class="chip">Redis</span><span class="chip">Edge Functions</span><span class="chip">pg_cron</span><span class="chip">ETL</span><span class="chip">JWT</span><span class="chip">REST APIs</span><span class="chip">GraphQL</span>
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-head">Cloud &amp; DevOps</div>
+            <div class="chips">
+              <span class="chip primary">AWS</span><span class="chip primary">Azure</span><span class="chip primary">Linux / Bash</span><span class="chip">Docker</span><span class="chip">Git / GitHub</span><span class="chip">CI/CD</span><span class="chip">Vercel</span><span class="chip">Railway</span><span class="chip">Conda / venv</span>
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-head">Web &amp; Integrations</div>
+            <div class="chips">
+              <span class="chip">Node.js</span><span class="chip">React</span><span class="chip">Next.js</span><span class="chip">Meta Ads API</span><span class="chip">Google Ads</span><span class="chip">Shopify</span><span class="chip">Omnisend</span><span class="chip">Twilio</span>
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-head">Networking</div>
+            <div class="chips">
+              <span class="chip">CCNA-level</span><span class="chip">VLAN</span><span class="chip">DSLAM / OLT</span><span class="chip">LAN-WAN</span><span class="chip">Cisco</span><span class="chip">TCP/IP</span><span class="chip">DNS</span>
+            </div>
+          </div>
+
+          <h2>Languages <span class="idx">// 06</span></h2>
+          <div class="lang-row"><span class="name-l">Georgian</span><span class="level">NATIVE · C2</span></div>
+          <div class="lang-row"><span class="name-l">English</span><span class="level">ADVANCED · C1</span></div>
+          <div class="lang-row"><span class="name-l">Russian</span><span class="level">BASIC · A2</span></div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="statusbar">
+      <span class="seg"><span class="pulse">CONN: SECURE</span></span>
+      <span class="seg"><span class="key">ENC&gt;</span> UTF-8</span>
+      <span class="seg"><span class="key">FMT&gt;</span> CV/A4</span>
+      <span class="right">
+        <span class="seg"><span class="key">REF&gt;</span> CROCOBET / DATA SCIENTIST</span>
+        <span class="seg"><span class="key">SIG&gt;</span> 0xPHORCHXA</span>
+      </span>
+    </div>
+
+  </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">⎙ PRINT / SAVE PDF</button>
+
+</body>
+</html>
